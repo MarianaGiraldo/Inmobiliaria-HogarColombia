@@ -1,5 +1,6 @@
 import {Entity, model, property, belongsTo} from '@loopback/repository';
 import {Cliente} from './cliente.model';
+import {Inmueble} from './inmueble.model';
 
 @model()
 export class Solicitud extends Entity {
@@ -9,12 +10,6 @@ export class Solicitud extends Entity {
     generated: true,
   })
   id?: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  inmuebleId: string;
   @property({
     type: 'string',
     required: true,
@@ -23,6 +18,9 @@ export class Solicitud extends Entity {
 
   @belongsTo(() => Cliente)
   clienteId: string;
+
+  @belongsTo(() => Inmueble)
+  inmuebleId: string;
 
   constructor(data?: Partial<Solicitud>) {
     super(data);
