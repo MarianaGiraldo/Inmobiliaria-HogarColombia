@@ -20,19 +20,22 @@ import {
 } from '@loopback/rest';
 import {Cliente, NotificacionCorreo} from '../models';
 import {ClienteRepository} from '../repositories';
-import {ManejoClavesService} from '../services/manejo-claves.service';
-import {NotificacionService} from '../services/notificacion.service';
+import {NotificacionCorreoRepository} from '../repositories/notificacion-correo.repository';
 
 export class ClienteController {
   constructor(
     @repository(ClienteRepository)
     public clienteRepository : ClienteRepository,
 
-    @service(NotificacionService)
-    public servicioNotificaciones = NotificacionService,
+    @repository(NotificacionCorreoRepository)
+    public notificacionCorreoRepo : NotificacionCorreoRepository,
 
-    @service(ManejoClavesService)
-    public servicioClaves = ManejoClavesService
+    //No lee servicios
+    // @service(NotificacionService)
+    // public servicioNotificaciones = NotificacionService,
+
+    // @service(ManejoClavesService)
+    // public servicioClaves = ManejoClavesService
   ) {}
 
   @post('/clientes')
@@ -56,9 +59,9 @@ export class ClienteController {
     // let clave = this.servicioClaves.GenerarClave();
     // let claveCifrada = this.servicioClaves.CifrarClave(clave);
 
-    // No reconoce el método desde el servicio. Se puso la función en el repositorio
-    let clave = this.clienteRepository.GenerarClave();
-    let claveCifrada = this.clienteRepository.CifrarClave(clave);
+    // No reconoce el método desde el servicio. Se puso la función en un repositorio
+    let clave = this.notificacionCorreoRepo.GenerarClave();
+    let claveCifrada = this.notificacionCorreoRepo.CifrarClave(clave);
     cliente.contrasena = claveCifrada;
     let p =  await this.clienteRepository.create(cliente);
     console.log(p)
@@ -69,8 +72,8 @@ export class ClienteController {
     notificacion.asunto = "Registro en el sistema";
     notificacion.mensaje = `Hola ${cliente.nombre}.<br/> Su nombre de usuario es: ${cliente.email} y su contraseña es: ${clave} `;
     //this.servicioNotificaciones.EnviarCorreo(notificacion);
-    // No reconoce el método desde el servicio. se puso la función en el repositorio
-    this.clienteRepository.EnviarCorreo(notificacion);
+    // No reconoce el método desde el servicio. se puso la función en un repositorio
+    this.notificacionCorreoRepo.EnviarCorreo(notificacion);
 
 
     return p;

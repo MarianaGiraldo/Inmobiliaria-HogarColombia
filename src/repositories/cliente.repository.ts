@@ -5,9 +5,6 @@ import {MongodbDataSource} from '../datasources';
 import {Cliente, ClienteRelations, NotificacionCorreo, Solicitud} from '../models';
 import {SolicitudRepository} from './solicitud.repository';
 
-const generador = require("password-generator");
-const cryptoJS = require("crypto-js");
-const fetch = require("node-fetch");
 export class ClienteRepository extends DefaultCrudRepository<
   Cliente,
   typeof Cliente.prototype.id,
@@ -24,18 +21,5 @@ export class ClienteRepository extends DefaultCrudRepository<
     this.registerInclusionResolver('solicitudes', this.solicitudes.inclusionResolver);
   }
 
-  GenerarClave() {
-    let clave = generador(8, false)
-    return clave
-  }
-  CifrarClave(clave: string){
-    let claveCifrada = cryptoJS.MD5(clave).toString();
-    return claveCifrada;}
-
-  EnviarCorreo(notificacion: NotificacionCorreo): Boolean {
-    let url = `${Llaves.urlServicioNotificaciones}/envio-correo?hash=${Llaves.hash_notificaciones}&correo-destino=${notificacion.destinatario}&asunto=${notificacion.asunto}&contenido=${notificacion.mensaje}`;
-    fetch(url)
-      .then((data: any)=> true)
-    return false;
-  }
+  
 }
