@@ -10,3 +10,5 @@ export * from './asesor.controller';
 export * from './inmueble.controller';
 export * from './admin.controller';
 export * from './solicitud.controller';
+export * from './cliente-solicitud.controller';
+export * from './solicitud-cliente.controller';
