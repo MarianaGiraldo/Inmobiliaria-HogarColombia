@@ -46,6 +46,12 @@ export class Cliente extends Entity {
   })
   ciudad: string;
 
+  @property({
+    type: 'string',
+    required: false,
+  })
+  contrasena: string;
+
   @hasMany(() => Solicitud)
   solicitudes: Solicitud[];
 
