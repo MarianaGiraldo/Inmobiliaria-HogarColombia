@@ -12,3 +12,5 @@ export * from './admin.controller';
 export * from './solicitud.controller';
 export * from './cliente-solicitud.controller';
 export * from './solicitud-cliente.controller';
+export * from './usuario-rol.controller';
+export * from './rol-usuario.controller';

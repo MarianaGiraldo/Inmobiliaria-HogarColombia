@@ -7,3 +7,5 @@ export * from './cliente.repository';
 export * from './inmueble.repository';
 export * from './solicitud.repository';
 export * from './notificacion-correo.repository';
+export * from './usuario.repository';
+export * from './rol.repository';
