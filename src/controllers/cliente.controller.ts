@@ -183,7 +183,7 @@ export class ClienteController {
     //Notificar al usuario de la nueva contrasena por mensaje de texto
     let notificacion = new NotificacionSms();
     notificacion.destino = cliente.celular;
-    notificacion.contenido = `Hola ${cliente.nombre}.<br/> Su nueva contraseña es: ${clave} `;
+    notificacion.contenido = `Hola ${cliente.nombre}. Su nueva contraseña es: ${clave} `;
     this.notificacionSMSRepo.EnviarSMS(notificacion);
 
   }

@@ -19,8 +19,10 @@ import {
 } from '@loopback/rest';
 import {NotificacionCorreo} from '../models';
 import {Credenciales} from '../models/credenciales.model';
+import {NotificacionSms} from '../models/notificacion-sms.model';
 import {Usuario} from '../models/usuario.model';
 import {NotificacionCorreoRepository} from '../repositories/notificacion-correo.repository';
+import {NotificacionSmsRepository} from '../repositories/notificacion-sms.repository';
 import {UsuarioRepository} from '../repositories/usuario.repository';
 
 export class UsuarioController {
@@ -30,6 +32,9 @@ export class UsuarioController {
 
     @repository(NotificacionCorreoRepository)
     public notificacionCorreoRepo : NotificacionCorreoRepository,
+
+    @repository(NotificacionSmsRepository)
+    public notificacionSMSRepo : NotificacionSmsRepository,
 
   ) {}
 
@@ -64,6 +69,12 @@ export class UsuarioController {
     notificacion.asunto = "Registro en el sistema";
     notificacion.mensaje = `Hola ${usuario.nombre}.<br/> Su nombre de usuario es: ${usuario.email} y su contraseña es: ${clave} `;
     this.notificacionCorreoRepo.EnviarCorreo(notificacion);
+
+    //Notificar al usuario de la nueva contrasena por mensaje de texto
+    let notificacion2 = new NotificacionSms();
+    notificacion2.destino = usuario.celular;
+    notificacion2.contenido = `Hola ${usuario.nombre}. Su nueva contraseña es: ${clave} `;
+    this.notificacionSMSRepo.EnviarSMS(notificacion2);
 
     return p;
   }
