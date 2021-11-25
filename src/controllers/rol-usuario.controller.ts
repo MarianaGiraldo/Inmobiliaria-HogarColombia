@@ -15,9 +15,9 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {Rol, Usuario} from '../models';
-import {RolRepository} from '../repositories';
-
+import {Rol} from '../models/rol.model';
+import {Usuario} from '../models/usuario.model';
+import {RolRepository} from '../repositories/rol.repository';
 export class RolUsuarioController {
   constructor(
     @repository(RolRepository) protected rolRepository: RolRepository,
