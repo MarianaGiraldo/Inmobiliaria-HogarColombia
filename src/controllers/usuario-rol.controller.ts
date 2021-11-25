@@ -6,11 +6,10 @@ import {
   get,
   getModelSchemaRef,
 } from '@loopback/rest';
-import {
-  Usuario,
-  Rol,
-} from '../models';
-import {UsuarioRepository} from '../repositories';
+import {Rol} from '../models/rol.model';
+import {Usuario} from '../models/usuario.model';
+import {UsuarioRepository} from '../repositories/usuario.repository';
+
 
 export class UsuarioRolController {
   constructor(
@@ -31,7 +30,7 @@ export class UsuarioRolController {
     },
   })
   async getRol(
-    @param.path.number('id') id: typeof Usuario.prototype.id,
+    @param.path.string('id') id: typeof Usuario.prototype.id,
   ): Promise<Rol> {
     return this.usuarioRepository.tieneRol(id);
   }
