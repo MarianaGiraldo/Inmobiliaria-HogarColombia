@@ -7,3 +7,4 @@ export * from './notificacion-correo.model';
 export * from './rol.model';
 export * from './usuario.model';
 export * from './notificacion-sms.model';
+export * from './credenciales.model';

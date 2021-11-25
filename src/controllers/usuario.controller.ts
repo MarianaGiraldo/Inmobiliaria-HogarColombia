@@ -17,13 +17,20 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
+import {NotificacionCorreo} from '../models';
+import {Credenciales} from '../models/credenciales.model';
 import {Usuario} from '../models/usuario.model';
+import {NotificacionCorreoRepository} from '../repositories/notificacion-correo.repository';
 import {UsuarioRepository} from '../repositories/usuario.repository';
 
 export class UsuarioController {
   constructor(
     @repository(UsuarioRepository)
     public usuarioRepository : UsuarioRepository,
+
+    @repository(NotificacionCorreoRepository)
+    public notificacionCorreoRepo : NotificacionCorreoRepository,
+
   ) {}
 
   @post('/usuarios')
@@ -44,7 +51,21 @@ export class UsuarioController {
     })
     usuario: Omit<Usuario, 'id'>,
   ): Promise<Usuario> {
-    return this.usuarioRepository.create(usuario);
+    let clave = this.notificacionCorreoRepo.GenerarClave();
+    console.log(clave)
+    let claveCifrada = this.notificacionCorreoRepo.CifrarClave(clave);
+    usuario.contrasena = claveCifrada;
+    let p =  await this.usuarioRepository.create(usuario);
+    console.log(p)
+
+    //Notificar al usuario
+    let notificacion = new NotificacionCorreo();
+    notificacion.destinatario = usuario.email;
+    notificacion.asunto = "Registro en el sistema";
+    notificacion.mensaje = `Hola ${usuario.nombre}.<br/> Su nombre de usuario es: ${usuario.email} y su contraseña es: ${clave} `;
+    this.notificacionCorreoRepo.EnviarCorreo(notificacion);
+
+    return p;
   }
 
   @get('/usuarios/count')
@@ -147,4 +168,34 @@ export class UsuarioController {
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.usuarioRepository.deleteById(id);
   }
+
+  /*
+   Sección de Seguridad
+  */
+
+   @post("/identificar-usuario",{
+     responses: {
+       '200':{
+         description: "Identificación de usuarios"
+       }
+     }
+   } )
+   async identificar(
+     @requestBody() credenciales: Credenciales
+   ): Promise<Usuario | null> {
+    let usuario = await this.usuarioRepository.findOne({
+      where: {
+        email: credenciales.usuario,
+        contrasena: credenciales.contrasena
+      }
+    });
+    if(usuario) {
+      //Generar nuevo token
+      //que se asignará a la respuesta del usuario
+    }
+
+    return usuario
+   }
+
+
 }
