@@ -4,22 +4,18 @@ import {
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-  response,
+  del, get,
+  getModelSchemaRef, param, patch, post, put, requestBody,
+  response
 } from '@loopback/rest';
 import {NotificacionCorreo} from '../models';
+import {CredencialesCambioContrasena} from '../models/credenciales-cambio-contrasena.model';
 import {Credenciales} from '../models/credenciales.model';
 import {NotificacionSms} from '../models/notificacion-sms.model';
+import {CredencialesRecuperarContrasena} from '../models/credenciales-recuperar-contrasena.model';
 import {Usuario} from '../models/usuario.model';
 import {NotificacionCorreoRepository} from '../repositories/notificacion-correo.repository';
 import {NotificacionSmsRepository} from '../repositories/notificacion-sms.repository';
@@ -184,14 +180,14 @@ export class UsuarioController {
    Sección de Seguridad
   */
 
-   @post("/identificar-usuario",{
+  @post("/identificar-usuario",{
      responses: {
        '200':{
          description: "Identificación de usuarios"
        }
      }
-   } )
-   async identificar(
+  } )
+  async identificar(
      @requestBody() credenciales: Credenciales
    ): Promise<Usuario | null> {
     let usuario = await this.usuarioRepository.findOne({
@@ -201,12 +197,76 @@ export class UsuarioController {
       }
     });
     if(usuario) {
+      usuario.contrasena="";
       //Generar nuevo token
       //que se asignará a la respuesta del usuario
     }
 
     return usuario
-   }
+  }
 
+  @post("/recuperar-contrasena",{
+    responses: {
+      '200':{
+        description: "Recuperación de contrasena de usuarios"
+      }
+    }
+  } )
+  async recuperarClave(
+    @requestBody() datos :CredencialesRecuperarContrasena
+  ): Promise<Boolean> {
+   let usuario = await this.usuarioRepository.findOne({
+     where: {
+       email: datos.correo
+     }
+   });
+   if(usuario) {
+    let clave = this.notificacionCorreoRepo.GenerarClave();
+    console.log(clave)
+    let claveCifrada = this.notificacionCorreoRepo.CifrarClave(clave);
+    usuario.contrasena = claveCifrada;
+    await this.usuarioRepository.updateById(usuario.id, usuario)
+
+    //Notificar al usuario de la nueva contrasena por mensaje de texto
+    let notificacion = new NotificacionSms();
+    notificacion.destino = usuario.celular;
+    notificacion.contenido = `Hola ${usuario.nombre}. Su nueva contraseña es: ${clave} `;
+    this.notificacionSMSRepo.EnviarSMS(notificacion);
+    return true
+    }
+   return false
+  }
+
+  @post("/cambiar-contrasena",{
+    responses: {
+      '200':{
+        description: "Recuperación de contrasena de usuarios"
+      }
+    }
+  } )
+  async cambiarClave(
+    @requestBody() datos : CredencialesCambioContrasena
+  ): Promise<Boolean> {
+   let usuario = await this.usuarioRepository.findById(datos.id)
+   if(usuario) {
+    if(usuario.contrasena == datos.clave_actual){
+      let claveCifrada = datos.clave_nueva; //Clave nueva ya viene cifrada
+      usuario.contrasena = claveCifrada;
+      await this.usuarioRepository.updateById(datos.id, usuario);
+
+      //Notificar al usuario
+      let notificacion = new NotificacionCorreo();
+      notificacion.destinatario = usuario.email;
+      notificacion.asunto = "Cambio de Contrasena";
+      notificacion.mensaje = `Hola ${usuario.nombre}.<br/> Su contraseña ha sido cambiada exitosamente.`;
+      this.notificacionCorreoRepo.EnviarCorreo(notificacion);
+
+      return true;
+    } else {
+      return false;
+    }
+    }
+   return false
+  }
 
 }

@@ -159,35 +159,6 @@ export class ClienteController {
     await this.clienteRepository.updateById(id, cliente);
   }
 
-  @patch('/clientes/{id}/recuperarcontrasena')
-  @response(204, {
-    description: 'Recuperación de contrasena exitosa',
-  })
-  async updateContrasenaById(
-    @param.path.string('id') id: string,
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Cliente, {partial: true}),
-        },
-      },
-    })
-    cliente: Cliente,
-  ): Promise<void> {
-    let clave = this.notificacionCorreoRepo.GenerarClave();
-    let claveCifrada = this.notificacionCorreoRepo.CifrarClave(clave);
-    cliente.contrasena = claveCifrada;
-    let p = await this.clienteRepository.updateById(id, cliente);
-    console.log(p)
-
-    //Notificar al usuario de la nueva contrasena por mensaje de texto
-    let notificacion = new NotificacionSms();
-    notificacion.destino = cliente.celular;
-    notificacion.contenido = `Hola ${cliente.nombre}. Su nueva contraseña es: ${clave} `;
-    this.notificacionSMSRepo.EnviarSMS(notificacion);
-
-  }
-
   @put('/clientes/{id}')
   @response(204, {
     description: 'Cliente PUT success',
