@@ -27,7 +27,7 @@ export class CargaArchivosController {
    * @param response
    * @param request
    */
-  @post('/CargarImagenInmueble',{
+  @post('/CargarImagenInmueble/{inmuebleId}',{
     responses: {
       200: {
         content: {
