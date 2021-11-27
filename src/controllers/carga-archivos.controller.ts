@@ -1,8 +1,10 @@
 // Uncomment these imports to begin using these cool features!
 
 import {inject} from '@loopback/core';
+import {repository} from '@loopback/repository';
 import {
   HttpErrors,
+  param,
   post,
   Request,
   requestBody,
@@ -10,11 +12,16 @@ import {
   RestBindings
 } from '@loopback/rest';
 import { Llaves } from '../config/llaves';
+import {Fotos} from '../models';
+import {FotosRepository} from '../repositories/fotos.repository';
 const multer = require('multer');
 const path = require('path');
 
 export class CargaArchivosController {
-  constructor() {}
+  constructor(
+    @repository(FotosRepository)
+    private fotosRepository: FotosRepository,
+  ) {}
 
   /**
    * @param response
@@ -36,14 +43,16 @@ export class CargaArchivosController {
   } )
   async cargarImagenInmueble(
     @inject(RestBindings.Http.RESPONSE) response: Response,
+    @param.path.string('inmuebleId') inmuebleId: string,
     @requestBody.file() request: Request,
   ): Promise<object | false>{
     const rutaImagen = path.join(__dirname, Llaves.carpetaImagenInmueble);
-    let res = await this.StoreFileToPath(rutaImagen, Llaves.nombreCampoImagenInmueble, request, response, Llaves.extensionesPermitidasIMG);
+    let res = await this.StoreFileToPath(rutaImagen, Llaves.nombreCampoImagenInmueble, request, response, Llaves.extensionesPermitidasIMG, inmuebleId);
     if(res){
       const nombre_archivo = response.req?.file?.filename;
       if(nombre_archivo) {
-        return {filename: nombre_archivo};
+        return {filename: nombre_archivo,
+                inmuebleId: inmuebleId};
       }
     }
     return res;
@@ -56,7 +65,7 @@ export class CargaArchivosController {
    * @param request
    * @param response
    */
-   private StoreFileToPath(storePath: string, fieldname: string, request: Request, response: Response, acceptedExt: string[]): Promise<object> {
+   private StoreFileToPath(storePath: string, fieldname: string, request: Request, response: Response, acceptedExt: string[], inmuebleId:string): Promise<object> {
     return new Promise<object>((resolve, reject) => {
       const storage = this.GetMulterStorageConfig(storePath);
       const upload = multer({
@@ -74,6 +83,11 @@ export class CargaArchivosController {
       },
       ).single(fieldname);
       upload(request, response, (err: any) => {
+        let foto = new Fotos();
+        foto.id = response.req?.file?.filename;;
+        foto.nombre = "Imagen Inmueble";
+        foto.inmuebleId = inmuebleId;
+        this.fotosRepository.create(foto);
         if (err) {
           reject(err);
         }
@@ -89,11 +103,11 @@ export class CargaArchivosController {
    private GetMulterStorageConfig(path: string) {
     var filename: string = '';
     const storage = multer.diskStorage({
-      destination: function (req: any, file: any, cb: any) {
-        cb(null, path)
+      destination: (req: any, file: any, cb: any) => {
+        cb(null, path);
       },
-      filename: function (req: any, file: any, cb: any) {
-        filename = `${Date.now()}-${file.originalname}`
+      filename: (req: any, file: any, cb: any) => {
+        filename = `${Date.now()}-${file.originalname}`;
         cb(null, filename);
       }
     });
