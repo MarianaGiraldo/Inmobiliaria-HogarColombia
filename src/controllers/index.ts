@@ -19,3 +19,4 @@ export * from './rol.controller';
 export * from './inmueble-fotos.controller';
 export * from './fotos-inmueble.controller';
 export * from './carga-archivos.controller';
+export * from './descarga-archivos.controller';
