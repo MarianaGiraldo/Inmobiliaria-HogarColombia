@@ -84,8 +84,7 @@ export class CargaArchivosController {
       ).single(fieldname);
       upload(request, response, (err: any) => {
         let foto = new Fotos();
-        foto.id = response.req?.file?.filename;;
-        foto.nombre = "Imagen Inmueble";
+        foto.nombre = response.req?.file?.filename;
         foto.inmuebleId = inmuebleId;
         this.fotosRepository.create(foto);
         if (err) {

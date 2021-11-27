@@ -98,8 +98,14 @@ const readdir = promisify(fs.readdir);
     let fileName = '';
     switch (type) {
       case 1:
-        const fotos: Fotos = await this.fotosRepository.findById(recordId);
-        fileName = fotos.nombre ?? '';
+        let foto = await this.fotosRepository.findOne({
+          where:{
+            nombre: recordId
+          }
+        });
+        if (foto) {
+          fileName = foto.nombre ?? '';
+        }
         break;
 
     }
