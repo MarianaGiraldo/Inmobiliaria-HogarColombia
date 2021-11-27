@@ -10,3 +10,4 @@ export * from './notificacion-sms.model';
 export * from './credenciales.model';
 export * from './credenciales-cambio-contrasena.model';
 export * from './credenciales-recuperar-contrasena.model';
+export * from './fotos.model';

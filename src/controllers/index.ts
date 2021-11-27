@@ -16,3 +16,6 @@ export * from './usuario-rol.controller';
 export * from './rol-usuario.controller';
 export * from './usuario.controller';
 export * from './rol.controller';
+export * from './inmueble-fotos.controller';
+export * from './fotos-inmueble.controller';
+export * from './carga-archivos.controller';

@@ -10,3 +10,4 @@ export * from './notificacion-correo.repository';
 export * from './usuario.repository';
 export * from './rol.repository';
 export * from './notificacion-sms.repository';
+export * from './fotos.repository';
