@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -20,6 +21,7 @@ import {
 import {Asesor} from '../models';
 import {AsesorRepository} from '../repositories';
 
+@authenticate('admin')
 export class AsesorController {
   constructor(
     @repository(AsesorRepository)

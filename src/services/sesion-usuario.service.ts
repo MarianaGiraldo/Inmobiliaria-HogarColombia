@@ -30,11 +30,22 @@ export class SesionUsuarioService {
     let url = `${Llaves.url_crear_token}?${Llaves.arg_nombre_token}=${usuario.nombre + " " + usuario.apellidos}&${Llaves.arg_id_persona_token}=${usuario.id}&${Llaves.arg_id_rol_token}=${usuario.rolId}`;
     let token = ""
     await fetch(url)
-      .then((res: any)=>{
-        token = res.text();
-        console.log(token)
+      .then(async (res: any)=>{
+        token = await res.text();
+        //console.log(token)
       })
     return token;
+  }
+
+  async ValidarToken(token: string, rol: string): Promise<string>{
+    let url = `${Llaves.url_validar_token}?${Llaves.arg_token}=${token}&${Llaves.arg_rol_token}=${rol}`;
+    let r= ""
+    await fetch(url)
+      .then(async(res: any)=>{
+        r = await res.text();
+        console.log(r)
+      })
+    return r;
   }
 
 }

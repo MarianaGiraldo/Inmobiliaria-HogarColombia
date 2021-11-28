@@ -20,3 +20,5 @@ export * from './inmueble-fotos.controller';
 export * from './fotos-inmueble.controller';
 export * from './carga-archivos.controller';
 export * from './descarga-archivos.controller';
+export * from './admin-asesor.controller';
+export * from './asesor-admin.controller';
