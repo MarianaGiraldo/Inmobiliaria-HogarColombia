@@ -20,8 +20,10 @@ import {Usuario} from '../models/usuario.model';
 import {NotificacionCorreoRepository} from '../repositories/notificacion-correo.repository';
 import {NotificacionSmsRepository} from '../repositories/notificacion-sms.repository';
 import {UsuarioRepository} from '../repositories/usuario.repository';
+import {SesionUsuarioService} from '../services/sesion-usuario.service';
 
 export class UsuarioController {
+  private sesionUsuariosService : SesionUsuarioService
   constructor(
     @repository(UsuarioRepository)
     public usuarioRepository : UsuarioRepository,
@@ -32,7 +34,9 @@ export class UsuarioController {
     @repository(NotificacionSmsRepository)
     public notificacionSMSRepo : NotificacionSmsRepository,
 
-  ) {}
+  ) {
+    this.sesionUsuariosService = new SesionUsuarioService(this.usuarioRepository)
+  }
 
   @post('/usuarios')
   @response(200, {
@@ -189,20 +193,19 @@ export class UsuarioController {
   } )
   async identificar(
      @requestBody() credenciales: Credenciales
-   ): Promise<Usuario | null> {
-    let usuario = await this.usuarioRepository.findOne({
-      where: {
-        email: credenciales.usuario,
-        contrasena: credenciales.contrasena
-      }
-    });
+   ): Promise<object | null> {
+    let usuario = await this.sesionUsuariosService.ValidarCredenciales(credenciales);
+    let token = "";
     if(usuario) {
       usuario.contrasena="";
       //Generar nuevo token
-      //que se asignará a la respuesta del usuario
+      token = await this.sesionUsuariosService.CrearToken(usuario);
     }
 
-    return usuario
+    return {
+      'tk': token,
+      'usuario': usuario
+    }
   }
 
   @post("/recuperar-contrasena",{

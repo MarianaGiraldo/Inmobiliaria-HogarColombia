@@ -6,5 +6,8 @@ export namespace Llaves {
   export const nombreCampoImagenInmueble = 'file';
   export const extensionesPermitidasIMG: string[] = ['.PNG', '.JPG', '.JPEG', '.SVG'];
   export const tamMaxImagenInmueble = 1024 * 1024;
-
+  export const url_crear_token = 'http://localhost:5001/crear-token';
+  export const arg_nombre_token = 'nombre';
+  export const arg_id_persona_token = 'id';
+  export const arg_id_rol_token = 'id_rol';
 }

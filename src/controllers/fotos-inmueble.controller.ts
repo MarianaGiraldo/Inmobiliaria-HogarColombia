@@ -10,7 +10,7 @@ import {
   Fotos,
   Inmueble,
 } from '../models';
-import {FotosRepository} from '../repositories';
+import {FotosRepository} from '../repositories/fotos.repository';
 
 export class FotosInmuebleController {
   constructor(

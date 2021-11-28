@@ -12,10 +12,8 @@ import {
   response
 } from '@loopback/rest';
 import {Cliente, NotificacionCorreo} from '../models';
-import {NotificacionSms} from '../models/notificacion-sms.model';
 import {ClienteRepository} from '../repositories';
 import {NotificacionCorreoRepository} from '../repositories/notificacion-correo.repository';
-import {NotificacionSmsRepository} from '../repositories/notificacion-sms.repository';
 
 export class ClienteController {
   constructor(
@@ -24,9 +22,6 @@ export class ClienteController {
 
     @repository(NotificacionCorreoRepository)
     public notificacionCorreoRepo : NotificacionCorreoRepository,
-
-    @repository(NotificacionSmsRepository)
-    public notificacionSMSRepo : NotificacionSmsRepository,
 
     //No lee servicios
     // @service(NotificacionService)
