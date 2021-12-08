@@ -47,10 +47,14 @@ export class CargaArchivosController {
     @requestBody.file() request: Request,
   ): Promise<object | false>{
     const rutaImagen = path.join(__dirname, Llaves.carpetaImagenInmueble);
-    let res = await this.StoreFileToPath(rutaImagen, Llaves.nombreCampoImagenInmueble, request, response, Llaves.extensionesPermitidasIMG, inmuebleId);
+    let res = await this.StoreFileToPath(rutaImagen, Llaves.nombreCampoImagenInmueble, request, response, Llaves.extensionesPermitidasIMG);
     if(res){
       const nombre_archivo = response.req?.file?.filename;
       if(nombre_archivo) {
+        let foto = new Fotos();
+        foto.nombre = nombre_archivo;
+        foto.inmuebleId = inmuebleId;
+        this.fotosRepository.create(foto);
         return {filename: nombre_archivo,
                 inmuebleId: inmuebleId};
       }
@@ -65,7 +69,7 @@ export class CargaArchivosController {
    * @param request
    * @param response
    */
-   private StoreFileToPath(storePath: string, fieldname: string, request: Request, response: Response, acceptedExt: string[], inmuebleId:string): Promise<object> {
+   private StoreFileToPath(storePath: string, fieldname: string, request: Request, response: Response, acceptedExt: string[]): Promise<object> {
     return new Promise<object>((resolve, reject) => {
       const storage = this.GetMulterStorageConfig(storePath);
       const upload = multer({
@@ -83,10 +87,6 @@ export class CargaArchivosController {
       },
       ).single(fieldname);
       upload(request, response, (err: any) => {
-        let foto = new Fotos();
-        foto.nombre = response.req?.file?.filename;
-        foto.inmuebleId = inmuebleId;
-        this.fotosRepository.create(foto);
         if (err) {
           reject(err);
         }
