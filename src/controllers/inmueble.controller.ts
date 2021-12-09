@@ -60,6 +60,7 @@ export class InmuebleController {
     return this.inmuebleRepository.count(where);
   }
 
+  @authenticate.skip()
   @get('/inmuebles')
   @response(200, {
     description: 'Array of Inmueble model instances',
