@@ -61,9 +61,9 @@ export class Inmueble extends Entity {
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
-  fotografias: string;
+  fotografias?: string;
 
   @property({
     type: 'string',
