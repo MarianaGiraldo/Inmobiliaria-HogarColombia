@@ -98,6 +98,7 @@ export class InmuebleController {
     return this.inmuebleRepository.updateAll(inmueble, where);
   }
 
+  @authenticate.skip()
   @get('/inmuebles/{id}')
   @response(200, {
     description: 'Inmueble model instance',
