@@ -3,7 +3,7 @@ import {
   CountSchema,
   Filter,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
   del,
@@ -13,23 +13,22 @@ import {
   param,
   patch,
   post,
-  requestBody,
+  requestBody
 } from '@loopback/rest';
 import {
-  Cliente,
-  Solicitud,
+  Solicitud, Usuario
 } from '../models';
-import {ClienteRepository} from '../repositories';
+import {UsuarioRepository} from '../repositories';
 
-export class ClienteSolicitudController {
+export class UsuarioSolicitudController {
   constructor(
-    @repository(ClienteRepository) protected clienteRepository: ClienteRepository,
+    @repository(UsuarioRepository) protected usuarioRepository: UsuarioRepository,
   ) { }
 
-  @get('/clientes/{id}/solicituds', {
+  @get('/usuarios/{id}/solicitudes', {
     responses: {
       '200': {
-        description: 'Array of Cliente has many Solicitud',
+        description: 'Array of Usuario has many Solicitud',
         content: {
           'application/json': {
             schema: {type: 'array', items: getModelSchemaRef(Solicitud)},
@@ -42,24 +41,24 @@ export class ClienteSolicitudController {
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<Solicitud>,
   ): Promise<Solicitud[]> {
-    return this.clienteRepository.solicitudes(id).find(filter);
+    return this.usuarioRepository.solicitudes(id).find(filter);
   }
 
-  @post('/clientes/{id}/solicituds', {
+  @post('/usuarios/{id}/solicitudes', {
     responses: {
       '200': {
-        description: 'Cliente model instance',
+        description: 'Usuario model instance',
         content: {'application/json': {schema: getModelSchemaRef(Solicitud)}},
       },
     },
   })
   async create(
-    @param.path.string('id') id: typeof Cliente.prototype.id,
+    @param.path.string('id') id: typeof Usuario.prototype.id,
     @requestBody({
       content: {
         'application/json': {
           schema: getModelSchemaRef(Solicitud, {
-            title: 'NewSolicitudInCliente',
+            title: 'NewSolicitudInUsuario',
             exclude: ['id'],
             optional: ['clienteId']
           }),
@@ -67,13 +66,13 @@ export class ClienteSolicitudController {
       },
     }) solicitud: Omit<Solicitud, 'id'>,
   ): Promise<Solicitud> {
-    return this.clienteRepository.solicitudes(id).create(solicitud);
+    return this.usuarioRepository.solicitudes(id).create(solicitud);
   }
 
-  @patch('/clientes/{id}/solicituds', {
+  @patch('/usuarios/{id}/solicitudes', {
     responses: {
       '200': {
-        description: 'Cliente.Solicitud PATCH success count',
+        description: 'Usuario.Solicitud PATCH success count',
         content: {'application/json': {schema: CountSchema}},
       },
     },
@@ -90,13 +89,13 @@ export class ClienteSolicitudController {
     solicitud: Partial<Solicitud>,
     @param.query.object('where', getWhereSchemaFor(Solicitud)) where?: Where<Solicitud>,
   ): Promise<Count> {
-    return this.clienteRepository.solicitudes(id).patch(solicitud, where);
+    return this.usuarioRepository.solicitudes(id).patch(solicitud, where);
   }
 
-  @del('/clientes/{id}/solicituds', {
+  @del('/usuarios/{id}/solicitudes', {
     responses: {
       '200': {
-        description: 'Cliente.Solicitud DELETE success count',
+        description: 'Usuario.Solicitud DELETE success count',
         content: {'application/json': {schema: CountSchema}},
       },
     },
@@ -105,6 +104,6 @@ export class ClienteSolicitudController {
     @param.path.string('id') id: string,
     @param.query.object('where', getWhereSchemaFor(Solicitud)) where?: Where<Solicitud>,
   ): Promise<Count> {
-    return this.clienteRepository.solicitudes(id).delete(where);
+    return this.usuarioRepository.solicitudes(id).delete(where);
   }
 }

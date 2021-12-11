@@ -1,5 +1,5 @@
 import {Entity, model, property, belongsTo} from '@loopback/repository';
-import {Cliente} from './cliente.model';
+import {Usuario} from './usuario.model';
 import {Inmueble} from './inmueble.model';
 
 @model()
@@ -16,7 +16,7 @@ export class Solicitud extends Entity {
   })
   estado: string;
 
-  @belongsTo(() => Cliente)
+  @belongsTo(() => Usuario)
   clienteId: string;
 
   @belongsTo(() => Inmueble)
