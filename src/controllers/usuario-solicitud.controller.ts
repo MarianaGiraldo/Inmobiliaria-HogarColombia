@@ -60,7 +60,7 @@ export class UsuarioSolicitudController {
           schema: getModelSchemaRef(Solicitud, {
             title: 'NewSolicitudInUsuario',
             exclude: ['id'],
-            optional: ['clienteId']
+            optional: ['usuarioId']
           }),
         },
       },

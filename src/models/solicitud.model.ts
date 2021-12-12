@@ -17,7 +17,7 @@ export class Solicitud extends Entity {
   estado: string;
 
   @belongsTo(() => Usuario)
-  clienteId: string;
+  usuarioId: string;
 
   @belongsTo(() => Inmueble)
   inmuebleId: string;

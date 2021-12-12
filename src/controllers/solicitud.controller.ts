@@ -21,14 +21,14 @@ import {
 import {Solicitud} from '../models';
 import {SolicitudRepository} from '../repositories';
 
-@authenticate('asesor')
+@authenticate('asesor', 'admin')
 export class SolicitudController {
   constructor(
     @repository(SolicitudRepository)
     public solicitudRepository : SolicitudRepository,
   ) {}
 
-  @authenticate('cliente', 'asesor')
+  @authenticate('cliente', 'asesor', 'admin')
   @post('/solicitudes')
   @response(200, {
     description: 'Solicitud model instance',
@@ -61,7 +61,6 @@ export class SolicitudController {
     return this.solicitudRepository.count(where);
   }
 
-  @authenticate('admin', 'asesor')
   @get('/solicitudes')
   @response(200, {
     description: 'Array of Solicitud model instances',
@@ -99,7 +98,7 @@ export class SolicitudController {
     return this.solicitudRepository.updateAll(solicitud, where);
   }
 
-  @authenticate('cliente', 'asesor')
+  @authenticate('cliente', 'asesor', 'admin')
   @get('/solicitudes/{id}')
   @response(200, {
     description: 'Solicitud model instance',
